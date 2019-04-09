@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import HistoryModal from './components/HistoryModal';
+import axios from 'axios';
 import './App.css';
 
 class App extends Component {
@@ -15,15 +16,24 @@ class App extends Component {
     this.closeHistoryModal = this.closeHistoryModal.bind(this);
   }
 
-  
   componentDidMount() {
-    //create request here
+    axios.get('/api/messages').then(res => {
+      this.setState({ allMessages: res.data });
+    });
   }
 
   createMessage() {
-    //create request here
+    axios
+      .post('/api/message', {
+        username: this.state.username,
+        message: this.state.message
+      })
+      .then(res => {
+        this.setState({
+          allMessages: res.data
+        });
+      });
   }
-  
 
   saveUsername() {
     if (this.state.username) {
@@ -63,7 +73,8 @@ class App extends Component {
             />
             <button
               className="button-username"
-              onClick={() => this.saveUsername()}>
+              onClick={() => this.saveUsername()}
+            >
               {this.state.messageInputDisabled ? 'save' : 'update'}
             </button>
             <input
@@ -81,7 +92,8 @@ class App extends Component {
             <button
               onClick={() => this.createMessage()}
               disabled={this.state.messageInputDisabled}
-              className="button-message">
+              className="button-message"
+            >
               send
             </button>
             <button onClick={() => this.showHistoryModal()}>history</button>
